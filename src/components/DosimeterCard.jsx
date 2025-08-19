@@ -106,13 +106,14 @@ const DosimeterCard = ({ deviceId, data, isStopped }) => {
 
   const latest = data[data.length - 1];
   const previous = data.length > 10 ? data[data.length - 11] : data[0];
-
-  const currentCPM = parseFloat(latest.cpm);
+  console.log("Latest data:", data);
+  console.log("CPM data :", latest);
+  const currentCPM = parseFloat(data.cpm);
   const microsievert = (currentCPM * 0.0057).toFixed(3);
-  const time = latest.timestamp;
+  const time = data.timestamp;
 
-  const cpmChange = currentCPM - parseFloat(previous.cpm);
-  const trend = ((cpmChange / (parseFloat(previous.cpm) || 1)) * 100).toFixed(2);
+  const cpmChange = currentCPM - parseFloat(data.cpm);
+  const trend = ((cpmChange / (parseFloat(data.cpm) || 1)) * 100).toFixed(2);
 
   const trendColor =
     trend > 0 ? 'text-danger' : trend < 0 ? 'text-success' : 'text-secondary';
