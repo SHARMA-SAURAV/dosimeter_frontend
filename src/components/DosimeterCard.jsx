@@ -106,8 +106,8 @@ const DosimeterCard = ({ deviceId, data, isStopped }) => {
 
   const latest = data[data.length - 1];
   const previous = data.length > 10 ? data[data.length - 11] : data[0];
-  console.log("Latest data:", data);
-  console.log("CPM data :", latest);
+  // console.log("Latest data:", data);
+  // console.log("CPM data :", latest);
   const currentCPM = parseFloat(data.cpm);
   const microsievert = (currentCPM * 0.0057).toFixed(3);
   const time = data.timestamp;

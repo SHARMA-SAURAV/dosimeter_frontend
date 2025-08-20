@@ -16,11 +16,11 @@ const Login = () => {
     try {
       const res = await api.post('/auth/login', form);
       const { token, email } = res.data;
-      console.log("Login Response:", res.data);
+      // console.log("Login Response:", res.data);
       localStorage.setItem('email', res.data.email);
       localStorage.setItem('token', res.data.token);
-      console.log("Token after login:", token);
-      console.log("Email after login:", email);
+      // console.log("Token after login:", token);
+      // console.log("Email after login:", email);
     //   localStorage.setItem('roles', JSON.stringify(res.data.roles));
     //   localStorage.setItem('activeRole', res.data.roles[0]);
       alert('Login successful!');
