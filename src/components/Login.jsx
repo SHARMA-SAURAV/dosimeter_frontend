@@ -1,33 +1,40 @@
+
+
+// 6. Enhanced Login.js with better error handling
 import React, { useState } from 'react';
-import api from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
+import { login } from '../services/api';
 
 const Login = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
+    if (error) setError(''); // Clear error when user starts typing
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
+
     try {
-      const res = await api.post('/auth/login', form);
+      const res = await login(form);
       const { token, email } = res.data;
-      // console.log("Login Response:", res.data);
-      localStorage.setItem('email', res.data.email);
-      localStorage.setItem('token', res.data.token);
-      // console.log("Token after login:", token);
-      // console.log("Email after login:", email);
-    //   localStorage.setItem('roles', JSON.stringify(res.data.roles));
-    //   localStorage.setItem('activeRole', res.data.roles[0]);
-      alert('Login successful!');
+      
+      localStorage.setItem('email', email);
+      localStorage.setItem('token', token);
+      
       navigate('/dashboard');
     } catch (err) {
-      alert('Login failed.');
-      console.error(err);
+      console.error('Login error:', err);
+      setError(err.response?.data || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,16 +58,22 @@ const Login = () => {
       >
         <div className="text-center mb-4">
           <i
-            className="fa-solid fa-user-shield fa-3x"
+            className="fa-solid fa-radiation fa-3x"
             style={{ color: 'rgb(13, 110, 253)' }}
           ></i>
           <h2 className="mt-2" style={{ color: '#333' }}>
-            Sign In
+            Dosimeter Login
           </h2>
           <p style={{ fontSize: '14px', color: '#666' }}>
-            Access your account
+            Access your radiation monitoring dashboard
           </p>
         </div>
+
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -74,8 +87,10 @@ const Login = () => {
                 name="email"
                 className="form-control"
                 placeholder="you@example.com"
+                value={form.email}
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </div>
           </div>
@@ -91,8 +106,10 @@ const Login = () => {
                 name="password"
                 className="form-control"
                 placeholder="Enter password"
+                value={form.password}
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </div>
           </div>
@@ -106,16 +123,23 @@ const Login = () => {
               fontWeight: 'bold',
               borderRadius: '8px',
             }}
+            disabled={loading}
           >
-            Login
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2"></span>
+                Logging in...
+              </>
+            ) : (
+              'Login'
+            )}
           </button>
 
           <div className="text-center mt-3">
-            <Link to="/forgot-password" className="text-decoration-none">
-              <small style={{ color: 'rgb(13, 110, 253)' , marginRight:'136px',marginLeft:'1px'  }}>Forgot password?</small>
-            </Link>
-              <Link to="/register" className="text-decoration-none">
-              <small style={{ color: 'rgb(13, 110, 253)', margin:"2px",marginLeft:'36px' }}>Sign Up</small>
+            <Link to="/register" className="text-decoration-none">
+              <small style={{ color: 'rgb(13, 110, 253)' }}>
+                Don't have an account? Sign Up
+              </small>
             </Link>
           </div>
         </form>
